@@ -154,3 +154,9 @@ body.dashboard {
 .dashboard li button:hover {
   color: #a71d2a;
 }
+
+.done {
+  text-decoration: line-through;
+  color: #999;
+}
+
