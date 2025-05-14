@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Task Dashboard</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body class="dashboard">
+  <div class="container dashboard">
+    <h1>🧠 Task Dashboard</h1>
+
+    <div style="text-align: right; margin-bottom: 10px;">
+      <button onclick="logout()" style="background:#dc3545;">Logout</button>
+    </div>
+
+    <form id="taskForm">
+      <input type="text" id="taskTitle" placeholder="Enter a new task" required />
+      <button type="submit">Add Task</button>
+    </form>
+
+    <ul id="taskList"></ul>
+  </div>
+
+  <script>
+  let isEditing = false;
+
+    // 🔐 Redirect to login if token is missing
+    if (!localStorage.getItem('token')) {
+      window.location.href = 'login.html';
+    }
+
+    const API_URL = 'http://localhost:3000/tasks';
+
+    const taskForm = document.getElementById('taskForm');
+    const taskTitle = document.getElementById('taskTitle');
+    const taskList = document.getElementById('taskList');
+
+    // 🔄 Load tasks
+    async function loadTasks() {
+      const res = await fetch(API_URL, {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        }
+      });
+      const tasks = await res.json();
+
+      taskList.innerHTML = '';
+      tasks.forEach(task => {
+        const li = document.createElement('li');
+        li.innerHTML = `
+  <input type="checkbox" data-id="${task._id}" ${task.completed ? 'checked' : ''} 
+       onchange="toggleComplete('${task._id}', this.checked)" />
+
+  <span 
+  contenteditable="true"
+  onkeypress="handleEditKey(event, '${task._id}')"
+  onblur="handleEditBlur(this, '${task._id}')"
+  class="${task.completed ? 'done' : ''}"
+>
+  ${task.title}
+</span>
+  <button onclick="deleteTask('${task._id}')">🗑️</button>
+`;
+        taskList.appendChild(li);
+      });
+    }
+
+    // ➕ Add task
+    taskForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      await fetch(API_URL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        },
+        body: JSON.stringify({ title: taskTitle.value })
+      });
+      taskTitle.value = '';
+      loadTasks();
+    });
+
+    // 🗑️ Delete task
+    async function deleteTask(id) {
+      await fetch(`${API_URL}/${id}`, {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        }
+      });
+      loadTasks();
+    }
+
+    // ✅ Toggle complete
+async function toggleComplete(id, completed) {
+  // Send update to backend — don't reload UI
+  await fetch(`${API_URL}/${id}`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${localStorage.getItem('token')}`
+    },
+    body: JSON.stringify({ completed })
+  });
+
+  // Just update the style manually (no loadTasks)
+  const span = document.querySelector(`input[data-id='${id}']`)
+    ?.nextElementSibling;
+
+  if (span) {
+    span.classList.toggle('done', completed);
+  }
+}
+
+
+    // ✏️ Edit task
+    async function editTask(id, newTitle) {
+      await fetch(`${API_URL}/${id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        
