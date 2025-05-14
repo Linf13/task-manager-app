@@ -121,36 +121,4 @@ async function toggleComplete(id, completed) {
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${localStorage.getItem('token')}`
-        },
-        body: JSON.stringify({ title: newTitle })
-      });
-    }
-function handleEditKey(event, id) {
-  if (event.key === 'Enter') {
-    event.preventDefault();
-    const newText = event.target.innerText.trim();
-    if (newText) {
-      editTask(id, newText);
-      event.target.blur();
-    }
-  }
-}
-
-function handleEditBlur(element, id) {
-  const newText = element.innerText.trim();
-  isEditing = false;
-  if (newText) {
-    editTask(id, newText);
-  }
-}
-    // 🚪 Logout
-    function logout() {
-      console.log('Logging out...');
-      localStorage.removeItem('token');
-      window.location.href = 'login.html';
-    }
-
-    loadTasks();
-  </script>
-</body>
-</html>
+        

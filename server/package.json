@@ -1,7 +1,6 @@
 {
   "name": "server",
   "version": "1.0.0",
-  "description": "",
   "main": "server.js",
   "dependencies": {
     "accepts": "^2.0.0",
@@ -133,8 +132,9 @@
     "wrappy": "^1.0.2"
   },
   "scripts": {
-  "dev": "nodemon server.js"
-},
+    "dev": "nodemon server.js",
+    "start": "node server.js"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Linf13/355final.git"
@@ -148,5 +148,6 @@
   "homepage": "https://github.com/Linf13/355final#readme",
   "devDependencies": {
     "nodemon": "^3.1.10"
-  }
+  },
+  "description": ""
 }

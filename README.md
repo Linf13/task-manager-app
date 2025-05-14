@@ -15,9 +15,6 @@ A full-stack task manager web app with user authentication and CRUD task functio
 - Auth: JSON Web Tokens (JWT)
 - Style: Responsive, mobile-first UI
 
-## Demo
-Click to watch the video demo:
-[Watch on Loom / YouTube](#) *(Insert link here)*
 
 ## Folder Structure
 task-manager-app/
